@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PizzaService } from '../pizza.service';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { OrderResponse } from '../models';
 
 const SIZES: string[] = [
@@ -30,7 +30,8 @@ export class MainComponent implements OnInit {
   pizzaSvc = inject(PizzaService)
   router = inject(Router)
 
-  orderResponse$!: Observable<OrderResponse>
+  orderResponse$!: Promise<OrderResponse>
+  email: string =""
 
 
   pizzaSize = SIZES[0]
@@ -51,9 +52,9 @@ export class MainComponent implements OnInit {
   processForm(){
     const data = this.form.value as FormData
     console.info('>>> data: ', data)
-    this.orderResponse$ = this.pizzaSvc.placeOrder(data)
-    // const queryParams: Params =  { email: data.email }
-    this.router.navigate([ '/orders', this.form.value.get['email']])
+    this.orderResponse$ = firstValueFrom(this.pizzaSvc.placeOrder(data))
+    this.form.reset
+    this.router.navigate([ '/orders', this.email])
     // this.router.navigate([ '/orders', data.email])
 
 
@@ -64,8 +65,8 @@ export class MainComponent implements OnInit {
   private createForm() {
     this.toppingArr = this.fb.array([Validators.required])
     this.form = this.fb.group({
-      name: this.fb.control<string>('', [ Validators.required ]),
-      email: this.fb.control<string>('', [ Validators.required ]),
+      name: this.fb.control<string>('Ng Chin Ling', [ Validators.required ]),
+      email: this.fb.control<string>('nchinling@gmail.com', [ Validators.required ]),
       size: this.fb.control<number>(0, [ Validators.required ]),
       base: this.fb.control<string>('', [ Validators.required ]),
       sauce: this.fb.control<string>('', [ Validators.required ]),

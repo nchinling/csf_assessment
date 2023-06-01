@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +30,9 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 
 @Controller
-@RequestMapping(path="", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping
+//removed for backend server deploy,ent
+// @CrossOrigin(origins="*")
 public class OrderController {
 
 
@@ -45,13 +49,18 @@ public class OrderController {
 		JsonReader reader = Json.createReader(new StringReader(payload));
         JsonObject req = reader.readObject();
 
+		Boolean base = false;
+		String thickCrustFromClient = req.getString("base");
+		if (thickCrustFromClient == "thick"){
+			base = true;
+		}
 
 		String name = req.getString("name");
 		String email = req.getString("email");
 		String sauce = req.getString("sauce");
 		String comments = req.getString("comments");;
 		Integer size = req.getInt("size");
-		Boolean thickCrust  = req.getBoolean("base");
+		// Boolean isThickCrust  = req.getBoolean("base");
 		JsonArray jsonArray = req.getJsonArray("toppings");
 		List<String> toppings = new LinkedList<>();
 		Integer listSize = jsonArray.size();
@@ -66,12 +75,12 @@ public class OrderController {
 		order.setEmail(email);
 		order.setSauce(sauce);
 		order.setSize(size);
-		order.setThickCrust(thickCrust);
+		order.setThickCrust(base);
 		order.setToppings(toppings);
 		order.setComments(comments);
 
 		JsonObject resp = null;
-		JsonObject errorResp = null;
+		// JsonObject errorResp = null;
 		PizzaOrder orderWithId;
 		try {
 			orderWithId = orderSvc.placeOrder(order);
@@ -93,6 +102,8 @@ public class OrderController {
 			);
 		}
 
+		System.out.printf(">>> Successfully placed order >>>>>\n");
+
 		return ResponseEntity
 		.status(HttpStatus.ACCEPTED)
 		.contentType(MediaType.APPLICATION_JSON)
@@ -100,18 +111,49 @@ public class OrderController {
 
 	}
 
-	
 
 	// TODO: Task 6 - GET /api/orders/<email>
+
+	@GetMapping(path="/api/orders/{email}", produces = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<List<PizzaOrder>> getAllPendingOrdersByEmail(@PathVariable String email) {
+    List<PizzaOrder> pizzaOrderList = orderSvc.getPendingOrdersByEmail(email);
+    return ResponseEntity.ok(pizzaOrderList);
+
+
+	}
 
 
 	// TODO: Task 7 - DELETE /api/order/<orderId>
 
+	@DeleteMapping(path="/api/order/{orderId}", consumes = MediaType.APPLICATION_JSON_VALUE )
+    @ResponseBody
+    public ResponseEntity<String> deleteOrdersbyOrderId(@PathVariable String orderId) {
+    
+	
+	Boolean isDeleted = orderSvc.markOrderDelivered(orderId);
 
-
-
+	if(!isDeleted){
+		return ResponseEntity.status(404)
+		.body(
+			Json.createObjectBuilder()
+				.add("error", "Delete Order failed")
+				.build().toString()
+		);
 
 	}
+	return ResponseEntity.ok("{}");
+
+	
+	}
+
+
+
+
+
+
+
+}
 
 
 

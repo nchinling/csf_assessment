@@ -1,1 +1,19 @@
-<p>orders works!</p>
+<h1>Pizza Factory</h1>>
+
+
+<!-- <div *ngFor="let o of allOrdersResponse$ | async; let i = index" [routerLink]="['/display', o.orderId ]" > -->
+<div *ngFor="let o of allOrdersResponse$ | async; let i = index">
+    <!-- <a href="{{ link }}">{{link}}</a> -->
+    <tr>
+        <h3>{{o.date}}</h3>
+    </tr>
+    <tr>
+        <h4>{{o.orderId}}</h4>&nbsp;<button type="button" (click)="removeOrder(o.orderId)">Delivered</button>
+    </tr>
+    <tr>
+        <h4>{{o.total}}</h4>
+    </tr>
+</div>  
+
+
+<button type="button" [routerLink]="['']">Back to Ordering</button>

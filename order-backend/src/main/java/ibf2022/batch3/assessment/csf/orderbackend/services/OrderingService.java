@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
@@ -28,7 +29,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 
-
+@Service
 public class OrderingService {
 
 	@Autowired
@@ -114,6 +115,7 @@ public class OrderingService {
 	// For Task 7
 	// WARNING: Do not change the method's signature or its implemenation
 	public boolean markOrderDelivered(String orderId) {
+		
 		return ordersRepo.markOrderDelivered(orderId) && pendingOrdersRepo.delete(orderId);
 	}
 
