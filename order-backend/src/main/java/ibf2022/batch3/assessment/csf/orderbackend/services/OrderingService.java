@@ -19,6 +19,19 @@ public class OrderingService {
 	// TODO: Task 5
 	// WARNING: DO NOT CHANGE THE METHOD'S SIGNATURE
 	public PizzaOrder placeOrder(PizzaOrder order) throws OrderException {
+		String railwayAPI = "https://pizza-pricing-production.up.railway.app";
+
+		String railwayUrl = UriComponentsBuilder
+			.fromUriString(openWeatherUrl)
+			.queryParam("q", city.replaceAll(" ", "+"))
+			.queryParam("units", unitMeasurement)
+			.queryParam("appId", openWeatherApiKey)
+			.queryParam("lang", language)
+			.toUriString();
+
+
+
+
 
 		return null;
 	}

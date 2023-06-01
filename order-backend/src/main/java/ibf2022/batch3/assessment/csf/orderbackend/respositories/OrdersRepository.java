@@ -13,9 +13,7 @@ import ibf2022.batch3.assessment.csf.orderbackend.models.PizzaOrder;
 public class OrdersRepository {
 
 	
-    //autowired in a bean.
-    @Autowired @Qualifier("pending-orders")
-    private RedisTemplate<String, String> redisTemplate;
+
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -24,10 +22,17 @@ public class OrdersRepository {
 	// Write the native MongoDB query in the comment below
 	//   Native MongoDB query here for add()
 	 /*
-	 * db.posts.insert({
-	 * 	_id: postId,
-	 * 	title: "title",
-	 * 	content: "content",
+	 * db.orders.insert({
+	 * 	_id: "orderId",
+	 * 	date: "date",
+	 * 	total: "total",
+	* 	name: "Ng Chin Ling",
+	* 	email: "nchinling@gmail.com",
+	* 	sauce: "signature",
+	* 	size: 1,
+	* 	crust: "true/false/thick/thin",
+	* 	comments: "comments",
+	* 	toppings: [topping1, topping2..]
 	 * })
 	 */
 	public void add(PizzaOrder order) {
@@ -41,7 +46,7 @@ public class OrdersRepository {
 		doc.put("size", order.getSize());
         doc.put("crust", order.getThickCrust());
         doc.put("comments", order.getComments());
-		doc.put("toppings", order.getComments());
+		doc.put("toppings", order.getTopplings());
 
         mongoTemplate.insert(doc, "orders");
 	}
