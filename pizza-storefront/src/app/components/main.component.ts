@@ -49,9 +49,12 @@ export class MainComponent implements OnInit {
 
 
   processForm(){
-    const data: FormData = this.form.value
+    const data = this.form.value as FormData
     console.info('>>> data: ', data)
     this.orderResponse$ = this.pizzaSvc.placeOrder(data)
+    // const queryParams: Params =  { email: data.email }
+    this.router.navigate([ '/orders', this.form.value.get['email']])
+    // this.router.navigate([ '/orders', data.email])
 
 
   }

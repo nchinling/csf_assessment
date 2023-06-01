@@ -46,7 +46,7 @@ public class OrdersRepository {
 		doc.put("size", order.getSize());
         doc.put("crust", order.getThickCrust());
         doc.put("comments", order.getComments());
-		doc.put("toppings", order.getTopplings());
+		doc.put("toppings", order.getToppings());
 
         mongoTemplate.insert(doc, "orders");
 	}
